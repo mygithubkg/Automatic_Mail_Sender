@@ -1,0 +1,24 @@
+{
+  "resumes": [
+    {
+      "id": 1,
+      "name": "SDE Resume",
+      "filename": "Karrtik_Gupta_SDE.pdf",
+      "filepath": "Resumes/Karrtik_Gupta_SDE.pdf",
+      "fileSize": 0,
+      "isDefault": true,
+      "uploadedAt": "2025-11-03T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "AI Resume",
+      "filename": "Karrtik_Gupta_AI.pdf",
+      "filepath": "Resumes/Karrtik_Gupta_AI.pdf",
+      "fileSize": 0,
+      "isDefault": false,
+      "uploadedAt": "2025-11-03T00:00:00.000Z"
+    }
+  ],
+  "resumeIdCounter": 3,
+  "lastUpdated": "2025-11-03T00:00:00.000Z"
+}

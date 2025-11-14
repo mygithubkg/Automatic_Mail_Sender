@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Email Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo">
+                    <span class="logo-icon">📧</span>
+                    <h1>Email Manager Pro</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                </div>
+            </div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="dashboard">📊 Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-page="contacts">📋 Manage Contacts</a></li>
+                    <li><a href="#" class="nav-link" data-page="resumes">📄 Resumes</a></li>
+                    <li><a href="#" class="nav-link" data-page="pending">⏳ Pending</a></li>
+                    <li><a href="#" class="nav-link" data-page="sent">✅ Sent</a></li>
+                    <li><a href="#" class="nav-link" data-page="templates">📝 Templates</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <div class="stats-bar">
+                <div class="stat-card total">
+                    <h3 id="statTotal">0</h3>
+                    <p>Total Emails</p>
+                </div>
+                <div class="stat-card pending">
+                    <h3 id="statPending">0</h3>
+                    <p>Pending</p>
+                </div>
+                <div class="stat-card sent">
+                    <h3 id="statSent">0</h3>
+                    <p>Sent Successfully</p>
+                </div>
+                <div class="stat-card failed">
+                    <h3 id="statFailed">0</h3>
+                    <p>Failed</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showPage('contacts')">➕ Add New Contact</button>
+                    <button class="btn btn-success" id="dashboardSendAllBtn" onclick="sendAllEmails()">📤 Send All Pending</button>
+                    <button class="btn btn-secondary" onclick="showPage('templates')">📝 Manage Templates</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div id="recentActivity"></div>
+            </div>
+        </div>
+
+        <!-- Manage Contacts Page -->
+        <div id="contacts" class="page">
+            <div class="card">
+                <h2>Add Single Contact</h2>
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label for="hrName">HR Contact Name *</label>
+                        <input type="text" id="hrName" name="hrName" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hrEmail">Email Address *</label>
+                        <input type="email" id="hrEmail" name="hrEmail" placeholder="john.smith@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company Name *</label>
+                        <input type="text" id="company" name="company" placeholder="e.g., Tech Corp Inc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="resumeSelect">Attach Resume(s)</label>
+                        <div id="resumeCheckboxes" style="background: #f8fafc; padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;"></div>
+                        <small style="color: #64748b; display: block; margin-top: 8px;">
+                            Select one or more resumes to attach. <a href="#" onclick="showPage('resumes'); return false;" style="color: #2a5298;">Manage resumes</a>
+                        </small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">✓ Add to Queue</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📥 Bulk Import</h2>
+                <p style="margin-bottom: 20px; color: #64748b;">Import multiple contacts at once using CSV or JSON format</p>
+                
+                <div style="margin-bottom: 25px;">
+                    <label class="btn btn-primary" for="fileInput" style="cursor: pointer;">
+                        📎 Choose File (CSV or JSON)
+                    </label>
+                    <input type="file" id="fileInput" accept=".csv,.json" style="display: none;" onchange="handleFileSelect(event)">
+                    <span id="fileName" style="margin-left: 15px; color: #64748b;"></span>
+                </div>
+
+                <div class="format-example">
+                    <h4>CSV Format:</h4>
+                    <pre>hrName,hrEmail,company
+John Smith,john@techcorp.com,Tech Corp
+Jane Doe,jane@startupinc.com,Startup Inc</pre>
+                </div>
+
+                <div class="format-example">
+                    <h4>JSON Format:</h4>
+                    <pre>[
+  {"hrName": "John Smith", "hrEmail": "john@techcorp.com", "company": "Tech Corp"},
+  {"hrName": "Jane Doe", "hrEmail": "jane@startupinc.com", "company": "Startup Inc"}
+]</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Page -->
+        <div id="pending" class="page">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                    <h2>⏳ Pending Emails</h2>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <button class="btn btn-success" id="pendingSendAllBtn" onclick="sendAllEmails()">📤 Send All with Defaults</button>
+                    </div>
+                </div>
+                
+                <!-- Bulk Action Settings -->
+                <div class="bulk-settings-card" style="margin-bottom: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white;">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1em;">⚙️ Default Settings for Bulk Send</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">📄 Default Resume:</label>
+                            <select id="bulkResumeSelect" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: none;">
+                                <option value="">Loading resumes...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">📝 Default Template:</label>
+                            <select id="bulkTemplateSelect" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: none;">
+                                <option value="">Loading templates...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p style="margin-top: 12px; font-size: 0.9em; opacity: 0.9;">
+                        💡 These settings will be used when clicking "Send All" or when no specific resume/template is selected for individual emails.
+                    </p>
+                </div>
+                
+                <div id="pendingEmailsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Resumes Page -->
+        <div id="resumes" class="page">
+            <div class="card">
+                <h2>📄 Manage Resumes</h2>
+                <p style="margin-bottom: 20px; color: #64748b;">Upload and manage your resume files. The default resume will be automatically attached to new emails.</p>
+                
+                <div style="margin-bottom: 30px;">
+                    <form id="resumeUploadForm" enctype="multipart/form-data">
+                        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                            <label class="btn btn-primary" for="resumeFileInput" style="cursor: pointer; margin: 0;">
+                                📎 Choose Resume File
+                            </label>
+                            <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                            <span id="resumeFileName" style="color: #64748b;"></span>
+                            <button type="submit" class="btn btn-success" id="uploadResumeBtn" style="display: none;">
+                                ⬆️ Upload
+                            </button>
+                        </div>
+                        <small style="color: #64748b; display: block; margin-top: 10px;">
+                            Accepted formats: PDF, DOC, DOCX (Max 10MB)
+                        </small>
+                    </form>
+                </div>
+
+                <div id="resumeList"></div>
+            </div>
+        </div>
+
+        <!-- Sent Page -->
+        <div id="sent" class="page">
+            <div class="card">
+                <h2>✅ Sent Emails</h2>
+                <div id="sentEmailsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Templates Page -->
+        <div id="templates" class="page">
+            <div class="card">
+                <h2>📝 Email Templates</h2>
+                <p style="margin-bottom: 20px; color: #64748b;">Manage your email templates. Set a default template for bulk sending.</p>
+                <div id="templateList" class="template-list"></div>
+            </div>
+
+            <div class="card">
+                <h2 id="templateEditorTitle">Create New Template</h2>
+                <form id="templateForm">
+                    <input type="hidden" id="templateId">
+                    <div class="form-group">
+                        <label for="templateName">Template Name *</label>
+                        <input type="text" id="templateName" placeholder="e.g., Professional Outreach, Cold Email, Follow-up" required>
+                        <small style="color: #64748b; display: block; margin-top: 5px;">
+                            This name will be shown when selecting templates on the Pending page
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="templateSubject">Email Subject *</label>
+                        <input type="text" id="templateSubject" placeholder="Use {{COMPANY_NAME}} and {{HR_NAME}} as placeholders" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="templateContent">Email Content *</label>
+                        <textarea id="templateContent" rows="12" placeholder="Use {{HR_NAME}} and {{COMPANY_NAME}} as placeholders" required></textarea>
+                        <small style="color: #64748b; display: block; margin-top: 8px;">
+                            Available placeholders: {{HR_NAME}}, {{COMPANY_NAME}}
+                        </small>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                        <input type="checkbox" id="templateIsDefault" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="templateIsDefault" style="margin: 0; cursor: pointer; font-weight: 500;">
+                            ⭐ Set as Default Template
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="submit" class="btn btn-primary">💾 Save Template</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetTemplateForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>📧 Email Manager Pro</h3>
+                <p>A professional email management system for streamlining your HR outreach campaigns.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Features</h3>
+                <ul>
+                    <li>• Bulk email import (CSV/JSON)</li>
+                    <li>• Template management</li>
+                    <li>• Real-time tracking</li>
+                    <li>• Persistent storage</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li>• Documentation</li>
+                    <li>• API Reference</li>
+                    <li>• Sample Files</li>
+                    <li>• Contact Support</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Email Manager Pro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

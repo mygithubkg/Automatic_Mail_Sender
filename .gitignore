@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+
+# Configuration files with sensitive data
+config.json
+
+# Email data storage
+emails-data.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
